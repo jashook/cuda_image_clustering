@@ -30,6 +30,8 @@ Rename this file to lodepng.cpp to use it for C++, or to lodepng.c to use it for
 
 #include "lodepng.h"
 
+#pragma warning (disable : 4996)
+
 #include <stdio.h>
 #include <stdlib.h>
 
