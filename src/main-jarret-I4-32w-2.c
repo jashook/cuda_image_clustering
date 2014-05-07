@@ -22,6 +22,7 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,18 +44,6 @@ void read_png_file(const char* const, hash_table*);
 
 /* ************************************************************************** */
 /* ************************************************************************** */
-
-typedef struct picture
-{
-   unsigned char* image;
-   unsigned int height;
-   unsigned int width;
-
-} picture;
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
 char* check_arguments(int argc, char** args)
 {
    char* file;
@@ -165,14 +154,14 @@ void hash_picture(const unsigned char* const image, size_t height, size_t width,
 {
    size_t i;
    size_t hash_value;
-
+   
    size_t* value = (size_t*)malloc(sizeof(size_t));
 
    for (i = 0; i < (height * width) / 160; ++i)
    {
       hash_value = *value = hash_string(image + (160 * i), (size_t)40 * 40);
       
-      //hash_table_insert(table, &hash_value, (void*)value, &hash, &combined_malloc);
+      hash_table_insert(table, &hash_value, (void*)value, &hash, &combined_malloc);
    
    }
 
@@ -181,45 +170,30 @@ void hash_picture(const unsigned char* const image, size_t height, size_t width,
 void read_csv_file(const char* const filename)
 {
    FILE* file;
-   vector vec;
-   unsigned char* image;
-   size_t i = 0;
-
-   char number[10], url[10000], URL[10], path[256], link_path[256];
+   hash_table table;
+   char number[10], url[1000], URL[1000], path[256], link_path[256];
 
    file = fopen(filename, "r");
 
-   vector_init(&vec, &malloc, &free);
+   hash_table_init(&table);
+
+   hash_table_reserve(&table, 1000000, &combined_malloc);
 
    while (!feof(file))
    {
-      if (fscanf(file, "\"%[^\"]\",\"%[^\"]\",\"%[^\"]\",\"%[^\"]\",\"%[^\"]\"\n", number, url, URL, path, link_path) > 2) 
-      {
-         read_png_file(path, &vec);
+      fscanf(file, "%[^','],%[^','],%[^','],%[^'s'],%s", number, url, URL, path, link_path);
 
-      }
-
-      else 
-      {
-         fscanf(file, "%[^,],\"%[^\"]\",\"%[^\"]\"\n", URL, path, link_path);
-         
-         read_png_file(path, &vec);
-
-      }
+      read_png_file(path, &table);
 
    }
 
-   printf("Total hashes: %d\n", vector_size(&vec));
-
 }
 
-void read_png_file(const char* const filename, vector* vec)
+void read_png_file(const char* const filename, hash_table* table)
 {
    unsigned error;
    unsigned char* image;
    unsigned int width, height;
-
-   picture* pic;
 
    printf("Trying to open the file: %s\n", filename);
 
@@ -229,13 +203,9 @@ void read_png_file(const char* const filename, vector* vec)
 
    else
    {
-      pic = (picture*)malloc(sizeof(picture));
+      hash_picture(image, height, width, table);
 
-      pic->image = image;
-      pic->width = width;
-      pic->height = height;
-
-      vector_push_back(vec, pic);
+      free(image);
 
    }
 
@@ -249,7 +219,7 @@ void test_hash_table(const char* const filename)
    
    hash_table_init(&table);
    
-   hash_table_reserve(&table, 10000, combined_malloc);
+   hash_table_reserve(&table, 1000000, combined_malloc);
    
    printf("-----\nHash Table, reserve\n-----\ntable:%p\nmax_size:%d\nsize:%d\ncollisions:%d\n", table.array, table.max_size, table.size, table.collisions);
 
@@ -323,9 +293,6 @@ int main(int argc, char** args)
 
    if (!filename) return 1;
 
-   //read_csv_file(filename);
-
-   test_vector();
 
    return 0;
 

@@ -29,28 +29,16 @@
 
 #include "lodepng.h"
 #include "hash_table.h"
-#include "vector.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
 char* check_arguments(int, char**);
-size_t hash(void*);
+size_t hash(int*);
 size_t hash_string(unsigned const char*, size_t);
 void hash_picture(unsigned const char* const, size_t, size_t, hash_table*);
 void read_csv_file(const char* const);
 void read_png_file(const char* const, hash_table*);
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-typedef struct picture
-{
-   unsigned char* image;
-   unsigned int height;
-   unsigned int width;
-
-} picture;
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -136,15 +124,15 @@ void* combined_malloc(size_t size)
 
 }
 
-size_t hash(void* number)
+size_t hash(int* number)
 {
-   return *(int*)number;
+   return *number;
 
 }
 
 size_t hash_string(unsigned const char* string, size_t size)
 {
-    size_t hash, i;
+    int hash, i;
 
     for (hash = i = 0; i < size; ++i)
     {
@@ -157,7 +145,7 @@ size_t hash_string(unsigned const char* string, size_t size)
     hash ^= (hash >> 11);
     hash += (hash << 15);
 
-    return (size_t)abs((int)hash);
+    return (size_t)abs(hash);
 
 }
 
@@ -165,14 +153,14 @@ void hash_picture(const unsigned char* const image, size_t height, size_t width,
 {
    size_t i;
    size_t hash_value;
-
+   
    size_t* value = (size_t*)malloc(sizeof(size_t));
 
    for (i = 0; i < (height * width) / 160; ++i)
    {
-      hash_value = *value = hash_string(image + (160 * i), (size_t)40 * 40);
+      hash_value = *value = hash_string((void*)(image + (160 * i)), (size_t)40 * 40);
       
-      //hash_table_insert(table, &hash_value, (void*)value, &hash, &combined_malloc);
+      hash_table_insert(table, &hash_value, value, &hash, &combined_malloc);
    
    }
 
@@ -181,45 +169,31 @@ void hash_picture(const unsigned char* const image, size_t height, size_t width,
 void read_csv_file(const char* const filename)
 {
    FILE* file;
-   vector vec;
-   unsigned char* image;
-   size_t i = 0;
+   char number[10];
+   char url[1000];
+   char URL[1000];
+   char path[256];
+   char link_path[256];
 
-   char number[10], url[10000], URL[10], path[256], link_path[256];
+
 
    file = fopen(filename, "r");
 
-   vector_init(&vec, &malloc, &free);
-
    while (!feof(file))
    {
-      if (fscanf(file, "\"%[^\"]\",\"%[^\"]\",\"%[^\"]\",\"%[^\"]\",\"%[^\"]\"\n", number, url, URL, path, link_path) > 2) 
-      {
-         read_png_file(path, &vec);
+      fscanf(file, "%[^','],%[^','],%[^','],%[^'s'],%s", number, url, URL, path, link_path);
 
-      }
-
-      else 
-      {
-         fscanf(file, "%[^,],\"%[^\"]\",\"%[^\"]\"\n", URL, path, link_path);
-         
-         read_png_file(path, &vec);
-
-      }
+      //read_png_file(path);
 
    }
 
-   printf("Total hashes: %d\n", vector_size(&vec));
-
 }
 
-void read_png_file(const char* const filename, vector* vec)
+void read_png_file(const char* const filename, hash_table* table)
 {
    unsigned error;
    unsigned char* image;
    unsigned int width, height;
-
-   picture* pic;
 
    printf("Trying to open the file: %s\n", filename);
 
@@ -229,13 +203,9 @@ void read_png_file(const char* const filename, vector* vec)
 
    else
    {
-      pic = (picture*)malloc(sizeof(picture));
+      hash_picture(image, height, width, table);
 
-      pic->image = image;
-      pic->width = width;
-      pic->height = height;
-
-      vector_push_back(vec, pic);
+      free(image);
 
    }
 
@@ -245,11 +215,12 @@ void test_hash_table(const char* const filename)
 {
 
    hash_table table;
+
    int i;
    
    hash_table_init(&table);
    
-   hash_table_reserve(&table, 10000, combined_malloc);
+   hash_table_reserve(&table, 1000000, combined_malloc);
    
    printf("-----\nHash Table, reserve\n-----\ntable:%p\nmax_size:%d\nsize:%d\ncollisions:%d\n", table.array, table.max_size, table.size, table.collisions);
 
@@ -267,53 +238,6 @@ void test_hash_table(const char* const filename)
 
 }
 
-void test_vector()
-{
-   size_t arr[10], arr2[10];
-   size_t i, j;
-   vector vec;
-
-   j = 200;
-
-   vector_init(&vec, &malloc, &free);
-
-   for (i = 0; i < 10; ++i)
-   {
-      arr[i] = i;
-
-      vector_push_back(&vec, &arr[i]);
-
-   }
-
-   for (i = 0; i < 10; ++i)
-   {
-      arr2[i] = i + 10;
-
-      vector_push_back(&vec, &arr2[i]);
-
-   }
-
-   vector_insert(&vec, &j, vec.size);
-   vector_remove(&vec, 0);
-
-   printf("-----\nVector testing\n-----\nSize: %d\nMax size: %d\nContents: ", vector_size(&vec), vector_max_size(&vec));
-
-   for (i = 0; i < 20; ++i) printf("%d ", *(size_t*)vector_pop_back(&vec));
-
-   vector_push_back(&vec, &j);
-
-   printf("\nFront: %d\nBack: %d\n", *(size_t*)vector_front(&vec), *(size_t*)vector_back(&vec));
-
-   vector_clear(&vec);
-
-   printf("Vector cleared\nSize: %d\n", vec.size);
-
-   vector_free(&vec);
-
-   printf("\n");
-
-}
-
 /* ************************************************************************** */
 /* ************************************************************************** */
 
@@ -323,10 +247,9 @@ int main(int argc, char** args)
 
    if (!filename) return 1;
 
-   //read_csv_file(filename);
-
-   test_vector();
-
+   test_hash_table(filename);
+   
+   
    return 0;
 
 }
