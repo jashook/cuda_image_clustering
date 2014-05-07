@@ -323,10 +323,6 @@ int main(int argc, char** args)
 
    if (!filename) return 1;
 
-   //read_csv_file(filename);
-
-   test_vector();
-
    return 0;
 
 }
