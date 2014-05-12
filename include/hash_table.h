@@ -52,7 +52,8 @@ typedef struct hash_table
 void hash_table_clear(hash_table*);
 void hash_table_free(hash_table*, void (*memory_management)(void*));
 void hash_table_init(hash_table*);
-int hash_table_insert(hash_table*, void*, void*, int (*hash_function)(void*), void* (*memory_management)(size_t));
+int hash_table_insert(hash_table*, void*, void*, size_t (*hash_function)(void*), void* (*memory_management)(size_t));
+int hash_table_insert_ignore_collision(hash_table*, void*, void*, size_t (*hash_function)(void*));
 void hash_table_reserve(hash_table*, size_t, void* (*memory_management)(size_t));
 hash_table_bucket* hash_table_search(hash_table*, void*, size_t (*hash_function)(void*));
 
