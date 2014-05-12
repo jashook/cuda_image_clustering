@@ -159,7 +159,7 @@ int hash_table_insert(hash_table* table, void* key, void* data, size_t (*hash_fu
 
 int hash_table_insert_ignore_collision(hash_table* table, void* key, void* data, size_t (*hash_function)(void*))
 {
-   int index;
+   size_t index;
       
    index = hash_function(key);
    

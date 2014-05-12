@@ -136,7 +136,7 @@ void* combined_malloc(size_t size)
 
 size_t hash(void* number)
 {
-   return *(int*)number;
+   return *(size_t*)number;
 
 }
 
@@ -161,9 +161,11 @@ size_t hash_string(unsigned const char* string, size_t size)
 
 void hash_picture(const unsigned char* const image, size_t height, size_t width, hash_table* table)
 {
-   size_t i;
+   size_t i, size, hash_value;
+
+   size = width * height;
    
-   for (i = 0; i < size; ++i)
+   for (i = 0; i < size / 160; ++i)
    {
       hash_value = hash_string(image + (160 * i), (size_t)40 * 40);
       
@@ -252,10 +254,7 @@ void read_png_file(const char* const filename, hash_table* table)
 {
    unsigned error;
    unsigned char* image;
-   unsigned char** image_d;
    unsigned int width, height;
-
-   picture* pic;
 
    printf("Trying to open the file: %s\n", filename);
 
@@ -265,11 +264,7 @@ void read_png_file(const char* const filename, hash_table* table)
 
    else
    {
-      cudaMalloc(image_d, (width * height) * sizeof(unsigned char));
-
-      cudaMemcpy(image_d, image, (width * height) * sizeof(unsigned char), cudaMemcpyHostToDevice);
-
-      hash_picture(*image_d, height, width, table);
+      hash_picture(image, height, width, table);
 
       free(image);
 
