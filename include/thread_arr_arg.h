@@ -3,12 +3,12 @@
 /*                                                                            */
 /* Author: Jarret Shook                                                       */
 /*                                                                            */
-/* Module: main.c                                                             */
+/* Module: thread_arr_arg.h                                                   */
 /*                                                                            */
 /* Modifications:                                                             */
 /*                                                                            */
-/* 3-May-14: Version 1.0: Created                                             */
-/* 3-May-14: Version 1.0: Last Updated                                        */
+/* 11-May-14: Version 1.0: Created                                            */
+/* 11-May-14: Version 1.0: Last Updated                                       */
 /*                                                                            */
 /*                                                                            */
 /* Timeperiod: ev8                                                            */
@@ -16,63 +16,23 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-//#define __CUDA__
+#ifndef __THREAD_ARR_ARG_H__
+#define __THREAD_ARR_ARG_H__
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-#include <string.h>
-
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
-
-#include "read.h"
-#include "vector.h"
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-char* check_arguments(int argc, char** args, bool& merged_output)
+typedef struct thread_arr_arg
 {
-    merged_output = false;
+    void* start;
+    void* end;
 
-    if (argc < 2 || argc > 4)
-    {
-        printf("Incorrect Usage: exe <csv file> <merged_output:TRUE, FALSE>\n");
-
-        return NULL;
-
-    }
-
-    else 
-    {
-        if (argc == 3) {
-            merged_output = (args[2][0] == 'T' || args[2][0] == 't') ? true : false; 
-
-        }
-
-        return args[1];
-
-    }
-
-}
+} thread_arr_arg;
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-int main(int argc, char** args)
-{
-    bool merged_output;
-
-    char* filename = check_arguments(argc, args, merged_output);
-
-    if (!filename) return 1;
-
-    if (merged_output) read_csv_file(filename);
-
-    return 0;
-
-}
+#endif
 
 /* ************************************************************************** */
 /* ************************************************************************** */
