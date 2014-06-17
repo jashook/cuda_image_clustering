@@ -21,6 +21,8 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
+#include <string.h>
+
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
@@ -28,6 +30,31 @@
 
 /* ************************************************************************** */
 /* ************************************************************************** */
+
+char* check_arguments(int argc, char** args, bool& merged_output)
+{
+    merged_output = false;
+
+    if (argc < 2 || argc > 4)
+    {
+        printf("Incorrect Usage: exe <csv file> <merged_output:TRUE, FALSE>\n");
+
+        return NULL;
+
+    }
+
+    else 
+    {
+        if (argc == 3) {
+            merged_output = (args[2][0] == 'T' || args[2][0] == 't') ? true : false; 
+
+        }
+
+        return args[1];
+
+    }
+
+}
 
 void parse_set_init(vector* vec)
 {
@@ -67,13 +94,15 @@ void parse_set_init(vector* vec)
 
 int main(int argc, char** args)
 {
-   char* filename = check_arguments(argc, args);
+    bool merged_output;
 
-   if (!filename) return 1;
+    char* filename = check_arguments(argc, args, merged_output);
 
-   read_csv_file(filename);
+    if (!filename) return 1;
 
-   return 0;
+    if (merged_output) read_csv_file(filename);
+
+    return 0;
 
 }
 

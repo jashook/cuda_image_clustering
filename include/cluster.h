@@ -22,12 +22,28 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-typedef struct cluster_pair
+typedef struct cluster_index
 {
-   char* fileid_one;
-   char* fileid_two;
+    picture* picture;
+    size_t cluster_number;
 
-} cluster_pair;
+} cluster_index;
+
+typedef struct cluster_ref_index
+{
+    size_t cluster_number;
+    picture* first_picture_in_cluster;
+
+} cluster_ref_index;
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+void build_cluster(picture*, cluster_index*, cluster_ref_index*);
+void create_first_cluster(picture*, cluster_index*, cluster_ref_index*);
+cluster_index* cluster_images(picture*);
+float compate_two_images(size_t*, size_t*);
+void init_cluster(cluster_index**, cluster_ref_index**);
 
 /* ************************************************************************** */
 /* ************************************************************************** */
