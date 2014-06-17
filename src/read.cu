@@ -57,7 +57,7 @@ void hash_picture(const unsigned char* const image, size_t height, size_t width,
     {
         hash_value = hash_string(image + (160 * i), (size_t)40 * 40);
       
-        current_picture->value_arr[i + 2] = abs(hash_value);
+        current_picture->value_arr[i + 2] = abs((int)hash_value);
 
     }
 
@@ -67,10 +67,9 @@ void read_csv_file(const char* const filename)
 {
     FILE* file;
     picture* current_picture;
-    size_t i = 0;
     vector picture_table;
 
-    vector_init(&picture_table);
+    vector_init(&picture_table, malloc, free);
 
     char number[10], url[10000], URL[10], path[256], link_path[256];
 
@@ -86,13 +85,13 @@ void read_csv_file(const char* const filename)
 
         current_picture = (picture*)malloc(sizeof(picture));
 
-        current_picture.filename = (char*)malloc(strlen(path) * sizeof(char));
+        current_picture->filename = (char*)malloc(strlen(path) * sizeof(char));
 
-        strcpy(current_picture.filename, path);
+        strcpy(current_picture->filename, path);
 
         vector_push_back(&picture_table, &current_picture);
 
-        read_png_file(&current_picture);
+        read_png_file(current_picture);
 
     }
 }
@@ -103,9 +102,9 @@ void read_png_file(picture* current_picture)
     unsigned char* image;
     unsigned int width, height;
 
-    printf("Trying to open the file: %s\n", filename);
+    printf("Trying to open the file: %s\n", current_picture->filename);
 
-    error = lodepng_decode32_file(&image, &width, &height, filename);
+    error = lodepng_decode32_file(&image, &width, &height, current_picture->filename);
 
     if (error) printf("Error reading the image, %u: %s\n", error, lodepng_error_text(error));
 

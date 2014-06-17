@@ -3,7 +3,7 @@
 /*                                                                            */
 /* Author: Jarret Shook                                                       */
 /*                                                                            */
-/* Module: read.h                                                             */
+/* Module: mem.cu                                                             */
 /*                                                                            */
 /* Modifications:                                                             */
 /*                                                                            */
@@ -66,7 +66,9 @@ void free_device(void* ptr)
 
         exit(1);
 
-     }
+   }
+
+   #endif
 
 }
 

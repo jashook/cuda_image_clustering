@@ -25,41 +25,30 @@
 #include "device_launch_parameters.h"
 
 #include "read.h"
+#include "vector.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-void parse_set_init(vector* vec)
+char* check_arguments(int argc, char** args)
 {
-   size_t i;
-   picture* image_arr;
-   unsigned char* images_host, images_device;
+   char* file;
 
-   size_t size, current_index;
-
-   current_index = 0;
-
-   size = 0;
-
-   cudaMalloc((void**)&image_arr, vec->size * sizeof(picture));
-
-   for (i = 0; i < vec->size; ++i) size += ((picture*)vec->array[i])->height * ((picture*)vec->array[i])->width;
-
-   images_host = (unsigned char*)malloc(size * sizeof(unsigned char));
-
-   for (i = 0; i < vec->size; ++i) 
+   if (argc != 2)
    {
-      memcpy(images_host + current_index, ((picture*)vec->array[i])->image, sizeof(unsigned char) * (((picture*)vec->array[i])->height * ((picture*)vec->array[i])->width)); 
-   
-      current_index += ((picture*)vec->array[i])->height * ((picture*)vec->array[i])->width;
+      printf("Error: correct usage <executable> <path to image>\n");
+      file = NULL;
 
    }
 
-   cudaMalloc((void**)&images_device, size * sizeof(unsigned char));
+   else
+   {
+      file = args[1];
 
-   cudaMemcpy((void**)&images_device, images_host, size, cudaMemcpyHostToDevice);
+   }
 
-   cudaMemcpy(&image_arr, vec->array, vec->size * sizeof(picture), cudaMemcpyHostToDevice); 
+   return file;
+
 }
 
 /* ************************************************************************** */
