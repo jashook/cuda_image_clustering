@@ -61,7 +61,51 @@ void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* clu
 
 }
 
-void create_first_cluster(picture* picture_arr, cluster_index* cluster, cluster_index* cluster_ref_table)
+cluster_index* cluster_images(picture* pictures, size_t picture_size)
+{
+    cluster_index* cluster;
+    cluster_ref_index* cluster_ref_table;
+
+    init_cluster(&cluster, &cluster_ref_table, pictures, picture_size);
+    create_first_cluster(pictures, cluster, cluster_ref_table);
+
+    build_cluster(pictures, cluster, cluster_ref_table);
+
+    free(cluster_ref_table);
+
+    return cluster;
+
+}
+
+float compare_two_images(size_t* first_arr, size_t* second_arr)
+{
+    size_t intersections, total_hashes, index;
+
+    size_t* search;
+
+    intersections = 0;
+
+    total_hashes = first_arr[1] + second_arr[1];
+
+    for (index = 2; index < first_arr[0]; ++index)
+    {
+        search = binary_search(second_arr + 2, second_arr + 2, second_arr + second_arr[0] + 2, first_arr[index]);
+
+        if (search)
+        {
+            intersections += first_arr[index * 2];
+
+            intersections += second_arr[(search - second_arr) * 2];
+
+        }
+
+    }
+
+    return intersections / (float) total_hashes;
+
+}
+
+void create_first_cluster(picture* picture_arr, cluster_index* cluster, cluster_ref_index* cluster_ref_table)
 {
     size_t picture_index, cluster_index;
 
@@ -72,5 +116,27 @@ void create_first_cluster(picture* picture_arr, cluster_index* cluster, cluster_
 
     cluster[picture_index].cluster_number = cluster_index;
     cluster_ref_table[cluster_index] = cluster[picture_index].picture;
+
+}
+
+void init_cluster(cluster_index** cluster, cluster_ref_index** cluster_ref_table, picture* pictures, size_t picture_size)
+{
+    int index;
+
+    *cluster = (cluster_index*)malloc(sizeof(cluster_index) * picture_size);
+
+    *cluster_ref_table = (cluster_ref_index*)malloc(sizeof(cluster_ref_index) * picture_size);
+
+    for (index = 0; index < picture_size; ++index)
+    {
+        (*cluster)[index].picture = &pictures[index];
+        (*cluster)[index].cluster_number = 0;
+
+        (*cluster_ref_table)[index].cluster_number = index;
+        (*cluster_ref_table)[index].first_picture_in_cluster = NULL;
+
+    }
+
+    /* all of the data structures used by build cluster are set up by this point */
 
 }

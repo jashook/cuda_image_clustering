@@ -41,9 +41,9 @@ typedef struct cluster_ref_index
 
 void build_cluster(picture*, cluster_index*, cluster_ref_index*);
 void create_first_cluster(picture*, cluster_index*, cluster_ref_index*);
-cluster_index* cluster_images(picture*);
-float compate_two_images(size_t*, size_t*);
-void init_cluster(cluster_index**, cluster_ref_index**);
+cluster_index* cluster_images(picture*, size_t);
+float compare_two_images(size_t*, size_t*);
+void init_cluster(cluster_index**, cluster_ref_index**, picture*, size_t);
 
 /* ************************************************************************** */
 /* ************************************************************************** */
