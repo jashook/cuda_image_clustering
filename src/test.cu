@@ -27,19 +27,9 @@ void test_hash_table(const char* const filename)
    
    hash_table_init(&table);
    
-   hash_table_reserve(&table, 10000, combined_malloc);
+   hash_table_reserve(&table, 10000, &malloc);
    
    printf("-----\nHash Table, reserve\n-----\ntable:%p\nmax_size:%d\nsize:%d\ncollisions:%d\n", table.array, table.max_size, table.size, table.collisions);
-   
-   i = 0;
-   
-   printf ("Searching for value: %d\nReturns:%d values\n",i, hash_table_search(&table, &i, &hash)->collisions);
-   
-   hash_table_clear(&table);
-   
-   printf ("Searching for value: %d\nReturns:%d\n",i, hash_table_search(&table, &i, &hash)->collisions);
-   
-   hash_table_free(&table, &combined_free);
 
 }
 
