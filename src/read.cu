@@ -67,7 +67,10 @@ void read_csv_file(const char* const filename)
 {
     FILE* file;
     picture* current_picture;
+    size_t file_count = 0;
+    size_t thread_count;
     vector picture_table;
+    void* start_arg;
 
     vector_init(&picture_table, malloc, free);
 
@@ -92,8 +95,26 @@ void read_csv_file(const char* const filename)
         vector_push_back(&picture_table, &current_picture);
 
         read_png_file(current_picture);
+        ++file_count;
 
     }
+
+    thread_count = 4;
+
+    for (i = 0; i < thread_count; ++i) 
+    {
+        thread_arg = malloc(sizeof(size_t) * 2 + sizeof(vector*));
+
+        ((vector*)thread_arg)[0] = picture_table;
+        ((size_t*)(((char*)thread_arg) + sizeof(vector*)))[0] = (file_count / 4) * i;
+        ((size_t*)(((char*)thread_arg) + sizeof(vector*)))[1] = thread_arg[1] + (file_count / 4);
+
+        read_png_files(thread_arg);
+
+    }
+
+    WaitForSingleObject(INFINITE);
+
 }
 
 void read_png_file(picture* current_picture)
@@ -113,6 +134,23 @@ void read_png_file(picture* current_picture)
         hash_picture(image, height, width, current_picture);
 
         free(image);
+
+    }
+
+}
+
+void read_png_files(void* start_arg)
+{
+    vector* picture_table;
+    size_t start, end;
+
+    picture_table = (vector*)(((void**)start_arg)[0])
+    start = *(size_t*)(((void**)start_arg)[1]);
+    end = *(size_t*)(((void**)start_arg)[2]);
+
+    while(start != end)
+    {
+        read_png_file(vector_at(picture_table, start++));
 
     }
 
