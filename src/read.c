@@ -176,14 +176,15 @@ void read_png_files(void* start_arg)
     start = (void**)arg->start;
     end = (void**)arg->end;
 
-    while(start++ != end)
+    while(start != end)
     {
-        read_png_file((picture*)*start);
+        printf("%s\n", ((picture*)start)->filename);
+        //read_png_file((picture*)(*start));
 
     }
 
 }
-
+       
 void read_txt_file(const char* filename)
 {
     FILE* file;
@@ -252,7 +253,7 @@ void read_txt_file(const char* filename)
 
         }
 
-        /* read_png_files(thread_arg); */
+        read_png_files(thread_arg);
 
     }
 
