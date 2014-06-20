@@ -21,7 +21,7 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-void build_cluster(vector* picture_arr, size_t picture_size, cluster_index* cluster, cluster_index* cluster_ref_table)
+void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* cluster, cluster_ref_index* cluster_ref_table)
 {
     size_t cluster_index, index, inner_index, added;
 
@@ -33,7 +33,7 @@ void build_cluster(vector* picture_arr, size_t picture_size, cluster_index* clus
 
     for (index = 0; index < picture_size; ++index)
     {
-        for (inner_index = 0; inner_index < cluster_index; ++inner_cluster)
+        for (inner_index = 0; inner_index < cluster_index; ++inner_index)
         {
             current_picture = cluster_ref_table[inner_index].first_picture_in_cluster;
 
@@ -53,7 +53,7 @@ void build_cluster(vector* picture_arr, size_t picture_size, cluster_index* clus
         {
             cluster[index].cluster_number = cluster_index;
 
-            cluster_ref_table[cluster_index++] = cluster[index].picture;
+            cluster_ref_table[cluster_index++].first_picture_in_cluster = cluster[index].picture;
 
         }
 
@@ -69,7 +69,7 @@ cluster_index* cluster_images(picture* pictures, size_t picture_size)
     init_cluster(&cluster, &cluster_ref_table, pictures, picture_size);
     create_first_cluster(pictures, cluster, cluster_ref_table);
 
-    build_cluster(pictures, cluster, cluster_ref_table);
+    build_cluster(pictures, picture_size, cluster, cluster_ref_table);
 
     free(cluster_ref_table);
 
@@ -80,7 +80,6 @@ cluster_index* cluster_images(picture* pictures, size_t picture_size)
 float compare_two_images(size_t* first_arr, size_t* second_arr)
 {
     size_t intersections, total_hashes, index;
-
     size_t* search;
 
     intersections = 0;
@@ -115,7 +114,7 @@ void create_first_cluster(picture* picture_arr, cluster_index* cluster, cluster_
     /* cluster_ref_table points to the first picture in each cluster */
 
     cluster[picture_index].cluster_number = cluster_index;
-    cluster_ref_table[cluster_index] = cluster[picture_index].picture;
+    cluster_ref_table[cluster_index].first_picture_in_cluster = cluster[picture_index].picture;
 
 }
 

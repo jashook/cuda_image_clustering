@@ -155,7 +155,7 @@ void read_png_file(picture* current_picture)
 
     else
     {
-        hash_picture(image, height, width, current_picture);
+        //hash_picture(image, height, width, current_picture);
 
         free(image);
 
@@ -249,7 +249,7 @@ picture* read_txt_file(const char* filename, size_t* picture_arr_size)
 
     for (index = 0; index < thread_count; ++index) 
     {
-        thread_arg = malloc(sizeof(thread_arr_arg*)); /* have each thread free the thread arg */
+        thread_arg = malloc(sizeof(thread_arr_arg)); /* have each thread free the thread arg */
 
         thread_arg->start = picture_table->array + (index * split);
         if (((index * split) + split) < picture_table->size && index == thread_count - 1)
@@ -296,9 +296,9 @@ picture* read_txt_file(const char* filename, size_t* picture_arr_size)
 
     }
 
-    free(picture_table);
-
     *picture_arr_size = picture_table->size;
+
+    free(picture_table);
 
     return picture_arr;
 

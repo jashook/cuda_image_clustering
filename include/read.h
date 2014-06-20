@@ -21,11 +21,11 @@
 /* ************************************************************************** */
 
 #include <stdio.h>
-#include <string.h>
 
 #include "picture.h"
 #include "thread.h"
 #include "thread_arr_arg.h"
+#include "utils.h"
 #include "vector.h"
 
 /* ************************************************************************** */

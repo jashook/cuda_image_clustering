@@ -3,64 +3,37 @@
 /*                                                                            */
 /* Author: Jarret Shook                                                       */
 /*                                                                            */
-/* Module: cluster.h                                                          */
+/* Module: utils.h                                                            */
 /*                                                                            */
 /* Modifications:                                                             */
 /*                                                                            */
-/* 11-May-14: Version 1.0: Created                                            */
-/* 11-May-14: Version 1.0: Last Updated                                       */
-/*                                                                            */
+/* 3-May-14: Version 1.0: Created                                             */
 /*                                                                            */
 /* Timeperiod: ev8                                                            */
 /*                                                                            */
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-#ifndef __CLUSTER_H__
-#define __CLUSTER_H__
+#ifndef __UTILS_H__
+#define __UTILS_H__
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-#include <windows.h>
-
-#include "picture.h"
+#include <string.h>
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-typedef struct cluster_index
-{
-    picture* picture;
-    size_t cluster_number;
-
-} cluster_index;
-
-typedef struct cluster_ref_index
-{
-    size_t cluster_number;
-    picture* first_picture_in_cluster;
-
-} cluster_ref_index;
+void quick_sort_helper(size_t*, size_t*, size_t*, size_t*);
+void quick_sort(size_t*, size_t*, size_t*);
+size_t* binary_search(size_t*, size_t*, size_t*, size_t);
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static const float cluster_number = .7;
+#endif /* __UTILS_H__ */
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-void build_cluster(picture*, size_t, cluster_index*, cluster_ref_index*);
-void create_first_cluster(picture*, cluster_index*, cluster_ref_index*);
-cluster_index* cluster_images(picture*, size_t);
-float compare_two_images(size_t*, size_t*);
-void init_cluster(cluster_index**, cluster_ref_index**, picture*, size_t);
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-#endif
-
-/* ************************************************************************** */
-/* ************************************************************************** */
