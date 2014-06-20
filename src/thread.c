@@ -21,9 +21,9 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-void init_thread(thread* thread_ptr)
+void thread_init(thread* thread_ptr)
 {
-    #ifdef __WIN32
+    #ifdef _WIN32
         memset(thread_ptr, 0, sizeof(thread));
 
     #else
@@ -33,9 +33,9 @@ void init_thread(thread* thread_ptr)
 
 }
 
-void start_thread(thread* thread_ptr, entry_function_ptr entry_ptr, void* start_arg, size_t stack_size)
+void thread_start(thread* thread_ptr, entry_function_ptr entry_ptr, void* start_arg, size_t stack_size)
 {
-    #ifdef __WIN32
+    #ifdef _WIN32
         size_t thread_id;
 
         thread_ptr->handle = (HANDLE)_beginthreadex(NULL, stack_size, entry_ptr, start_arg, (unsigned)0, (unsigned*)&thread_id);
@@ -47,9 +47,9 @@ void start_thread(thread* thread_ptr, entry_function_ptr entry_ptr, void* start_
 
 }
 
-void join(thread* thread_ptr)
+void thread_join(thread* thread_ptr)
 {
-    #ifdef __WIN32
+    #ifdef _WIN32
         WaitForSingleObject(thread_ptr->handle, INFINITE);
 
     #else
@@ -58,11 +58,6 @@ void join(thread* thread_ptr)
     #endif
     
 }
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-#endif
 
 /* ************************************************************************** */
 /* ************************************************************************** */

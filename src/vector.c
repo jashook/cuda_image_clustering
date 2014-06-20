@@ -259,9 +259,15 @@ void vector_remove(vector* vec, size_t index)
 
 void vector_reserve(vector* vec, size_t new_size)
 {
-   vec->vector_free(vec->array);
-   
-   vec->array = (void**)vec->vector_malloc(sizeof(void*) * new_size);
+    void** temp;
+
+    temp = (void**)vec->vector_malloc(sizeof(void*) * new_size);
+
+    memcpy(temp, vec->array, sizeof(void*) * vec->size);
+
+    vec->vector_free(vec->array);
+
+    vec->array = temp;
 
 }
 

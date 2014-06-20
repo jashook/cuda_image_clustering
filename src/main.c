@@ -31,6 +31,7 @@
 #endif
 
 #include "read.h"
+#include "vector.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -65,7 +66,8 @@ char* check_arguments(int argc, char** args, size_t* merged_output)
 
 int main(int argc, char** args)
 {
-    size_t merged_output;
+    size_t merged_output, picture_size;
+    picture* picture_table;
 
     char* filename = check_arguments(argc, args, &merged_output);
 
@@ -73,7 +75,9 @@ int main(int argc, char** args)
 
     if (merged_output) read_csv_file(filename);
 
-    else read_txt_file(filename);
+    else picture_table = read_txt_file(filename, &picture_size);
+
+    free(picture_table);
 
     return 0;
 

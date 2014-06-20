@@ -14,12 +14,7 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "read.h"
-#include "thread_arr_arg.h"
-#include "vector.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -57,13 +52,16 @@ void hash_picture(const unsigned char* image, size_t height, size_t width, pictu
 
     current_picture->value_arr = (size_t*)malloc(sizeof(size_t) * (((size / 160) * 2) + 2));
    
-    for (i = 0; i < size / 160; ++i)
+    for (i = 0; i < (size / 160); ++i)
     {
         hash_value = hash_string(image + (160 * i), (size_t)40 * 40);
       
         current_picture->value_arr[i + 2] = abs((int)hash_value);
 
     }
+
+    current_picture->value_arr[0] = (size / 160);
+    current_picture->value_arr[1] = current_picture->value_arr[0];
 
 }
 
@@ -149,11 +147,11 @@ void read_png_file(picture* current_picture)
     unsigned char* image;
     unsigned int width, height;
 
-    printf("Trying to open the file: %s\n", current_picture->filename);
+    /* printf("Trying to open the file: %s\n", current_picture->filename); */
 
     error = lodepng_decode32_file(&image, &width, &height, current_picture->filename);
 
-    if (error) printf("Error reading the image, %u: %s\n", error, lodepng_error_text(error));
+    if (error) printf("Error reading the image, %u: %s\nLocation: %s\n", error, lodepng_error_text(error), current_picture->filename);
 
     else
     {
@@ -168,17 +166,21 @@ void read_png_file(picture* current_picture)
 void read_png_files(void* start_arg)
 {
     thread_arr_arg* arg;
-
     void** start, **end;
+    size_t number, total;
 
     arg = (thread_arr_arg*)start_arg;
 
     start = (void**)arg->start;
     end = (void**)arg->end;
 
+    total = end - start;
+
     while(start != end)
     {
-        /*printf("%s\n", ((picture*)(*start))->filename); */
+        number = total - (end - start) + 1;
+
+        if (number % 25 == 0) printf("%d of %d\n", number, total);
 
         read_png_file((picture*)(*start));
 
@@ -187,8 +189,18 @@ void read_png_files(void* start_arg)
     }
 
 }
+
+unsigned int __stdcall read_png_files_t_helper(void* start_arg)
+{
+    read_png_files(start_arg);
+
+    free(start_arg);
+
+    return 0;
+
+}
        
-void read_txt_file(const char* filename)
+picture* read_txt_file(const char* filename, size_t* picture_arr_size)
 {
     FILE* file;
     picture* current_picture;
@@ -196,6 +208,8 @@ void read_txt_file(const char* filename)
     vector* picture_table;
     char* ret_val;
     thread_arr_arg* thread_arg;
+    picture* picture_arr;
+    thread t_arr[4];
 
     file_count = thread_count = 0;
 
@@ -256,12 +270,36 @@ void read_txt_file(const char* filename)
 
         }
 
-        read_png_files(thread_arg);
+        thread_init(&t_arr[index]);
+
+        thread_start(&t_arr[index], read_png_files_t_helper, thread_arg, 1024);
 
     }
 
     /* should join here */
 
     /* can start building cluster (if we are not producing at the same time as consuming) */
+
+    for (index = 0; index < thread_count; ++index) thread_join(&t_arr[index]);
+
+    picture_arr = (picture*)malloc(sizeof(picture) * picture_table->size);
+
+    for (index = 0; index < picture_table->size; ++index)
+    {
+        if (vector_at(picture_table, index))
+        {
+            memcpy(&picture_arr[index], (picture*)vector_at(picture_table, index), sizeof(picture));
+
+            free(vector_at(picture_table, index));
+
+        }
+
+    }
+
+    free(picture_table);
+
+    *picture_arr_size = picture_table->size;
+
+    return picture_arr;
 
 }

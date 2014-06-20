@@ -21,7 +21,7 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* cluster, cluster_index* cluster_ref_table)
+void build_cluster(vector* picture_arr, size_t picture_size, cluster_index* cluster, cluster_index* cluster_ref_table)
 {
     size_t cluster_index, index, inner_index, added;
 

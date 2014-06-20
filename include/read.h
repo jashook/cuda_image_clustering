@@ -20,7 +20,13 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
+#include <stdio.h>
+#include <string.h>
+
 #include "picture.h"
+#include "thread.h"
+#include "thread_arr_arg.h"
+#include "vector.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -31,7 +37,8 @@ void hash_picture(const unsigned char*, size_t, size_t, picture*);
 void read_csv_file(const char*);
 void read_png_file(picture*);
 void read_png_files(void*);
-void read_txt_file(const char*);
+unsigned int __stdcall read_png_files_t_helper(void*);
+picture* read_txt_file(const char*, size_t*);
 
 /* ************************************************************************** */
 /* ************************************************************************** */

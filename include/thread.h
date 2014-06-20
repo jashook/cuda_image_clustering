@@ -17,22 +17,28 @@
 /* ************************************************************************** */
 
 #ifndef __THREAD_H__ 
-#define __THREAD_H__ 
+#define __THREAD_H__
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-#ifdef __WIN32
+#include <Windows.h>
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+#ifdef _WIN32
     typedef unsigned int (__stdcall* entry_function_ptr)(void*);
 
 #else
-    typdef void (*entry_function_ptr)(void*);
+
+    typedef void (*entry_function_ptr)(void*);
 
 #endif
 
 typedef struct thread
 {
-    #ifdef __WIN32
+    #ifdef _WIN32
         HANDLE handle;
     #else
         pthread_t handle;
@@ -43,9 +49,9 @@ typedef struct thread
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-void init_thread(thread*);
-void start_thread(thread*, entry_function_ptr, void*, size_t);
-void join(thread*);
+void thread_init(thread*);
+void thread_start(thread*, entry_function_ptr, void*, size_t);
+void thread_join(thread*);
 
 /* ************************************************************************** */
 /* ************************************************************************** */
