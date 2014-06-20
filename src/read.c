@@ -155,7 +155,7 @@ void read_png_file(picture* current_picture)
 
     else
     {
-        //hash_picture(image, height, width, current_picture);
+        hash_picture(image, height, width, current_picture);
 
         free(image);
 

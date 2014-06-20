@@ -67,6 +67,8 @@ int main(int argc, char** args)
 {
     size_t merged_output, picture_size;
     picture* picture_table;
+    cluster_index* cluster;
+    size_t index;
 
     char* filename = check_arguments(argc, args, &merged_output);
 
@@ -76,7 +78,11 @@ int main(int argc, char** args)
 
     else picture_table = read_txt_file(filename, &picture_size);
 
-    free(picture_table);
+    cluster = cluster_images(picture_table, picture_size);
+
+    for (index = 0; index < picture_size; ++index) printf("Picture: %s, Cluster Number: %d\n", cluster[index].picture->filename, cluster[index].cluster_number);
+
+    free(cluster);
 
     return 0;
 

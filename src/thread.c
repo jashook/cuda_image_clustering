@@ -27,7 +27,7 @@ void thread_init(thread* thread_ptr)
         memset(thread_ptr, 0, sizeof(thread));
 
     #else
-        /* pthread_create */
+        memset(thread, 0, sizeof(thread));
 
     #endif
 
@@ -41,7 +41,7 @@ void thread_start(thread* thread_ptr, entry_function_ptr entry_ptr, void* start_
         thread_ptr->handle = (HANDLE)_beginthreadex(NULL, stack_size, entry_ptr, start_arg, (unsigned)0, (unsigned*)&thread_id);
 
     #else
-        /* pthread_start */
+        pthread_create(thread_ptr->handle, NULL, entry_ptr, start_arg);
 
     #endif
 
@@ -53,7 +53,7 @@ void thread_join(thread* thread_ptr)
         WaitForSingleObject(thread_ptr->handle, INFINITE);
 
     #else
-        pthread_join(&thread_ptr->handle);
+        pthread_join(&thread_ptr->handle, NULL);
 
     #endif
     
