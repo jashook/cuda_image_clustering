@@ -151,7 +151,7 @@ void read_png_file(picture* current_picture)
 
     error = lodepng_decode32_file(&image, &width, &height, current_picture->filename);
 
-    if (error) printf("Error reading the image, %u: %s\nLocation: %s\n", error, lodepng_error_text(error), current_picture->filename);
+    if (error) printf("Error reading the image, %d: %s\nLocation: %s\n", error, lodepng_error_text(error), current_picture->filename);
 
     else
     {
@@ -180,7 +180,7 @@ void read_png_files(void* start_arg)
     {
         number = total - (end - start) + 1;
 
-        if (number % 25 == 0) printf("%d of %d\n", number, total);
+        if (number % 25 == 0) printf("%d of %d\n", (int)number, (int)total);
 
         read_png_file((picture*)(*start));
 
@@ -190,13 +190,23 @@ void read_png_files(void* start_arg)
 
 }
 
+#ifdef _WIN32
 unsigned int __stdcall read_png_files_t_helper(void* start_arg)
+#else
+void read_png_files_t_helper(void* start_arg)
+#endif
 {
     read_png_files(start_arg);
 
     free(start_arg);
 
+    #ifdef _WIN32
+
     return 0;
+
+    #else
+
+    #endif
 
 }
        

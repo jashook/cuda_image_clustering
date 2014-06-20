@@ -80,7 +80,7 @@ int main(int argc, char** args)
 
     cluster = cluster_images(picture_table, picture_size);
 
-    for (index = 0; index < picture_size; ++index) printf("Picture: %s, Cluster Number: %d\n", cluster[index].picture->filename, cluster[index].cluster_number);
+    for (index = 0; index < picture_size; ++index) printf("Picture: %s, Cluster Number: %d\n", cluster[index].picture->filename, (int)cluster[index].cluster_number);
 
     free(cluster);
 
