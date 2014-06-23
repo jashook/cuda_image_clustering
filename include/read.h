@@ -35,7 +35,7 @@ size_t hash(void*);
 size_t hash_string(unsigned const char*, size_t);
 void hash_picture(const unsigned char*, size_t, size_t, picture*);
 void read_csv_file(const char*);
-void read_png_file(picture*);
+int read_png_file(picture*);
 void read_png_files(void*);
 
 #ifdef _WIN32

@@ -95,9 +95,9 @@ float compare_two_images(size_t* first_arr, size_t* second_arr)
 
         if (search)
         {
-            intersections += first_arr[index * 2];
+            intersections += first_arr[index + first_arr[0]];
 
-            intersections += second_arr[(search - second_arr) * 2];
+            intersections += second_arr[(search - second_arr) + second_arr[0]];
 
         }
 
