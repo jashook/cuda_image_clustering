@@ -31,11 +31,14 @@ void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* clu
 
     added = 0;
 
-    for (index = 0; index < picture_size; ++index)
+    for (index = 1; index < picture_size; ++index)
     {
         for (inner_index = 0; inner_index < cluster_index; ++inner_index)
         {
             current_picture = cluster_ref_table[inner_index].first_picture_in_cluster;
+
+            // avoid a comparison with the same image
+            if (current_picture->filename == picture_arr[index].filename) continue;
 
             if (compare_two_images(current_picture->value_arr, picture_arr[index].value_arr) > cluster_number)
             {

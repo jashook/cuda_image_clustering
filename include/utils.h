@@ -20,6 +20,7 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
+#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -28,6 +29,7 @@
 
 void quick_sort_helper(size_t*, size_t*, size_t*, size_t*);
 void quick_sort(size_t*, size_t*, size_t*);
+size_t* set_up_arr(size_t*);
 size_t* binary_search(size_t*, size_t*, size_t*, size_t);
 
 /* ************************************************************************** */

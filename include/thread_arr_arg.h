@@ -26,6 +26,7 @@ typedef struct thread_arr_arg
 {
     void* start;
     void* end;
+    void* picture_arr;
 
 } thread_arr_arg;
 

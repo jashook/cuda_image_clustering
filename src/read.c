@@ -214,7 +214,7 @@ picture* read_txt_file(const char* filename, size_t* picture_arr_size)
 {
     FILE* file;
     picture* current_picture;
-    size_t file_count, index, length, split, thread_count;
+    size_t file_count, index, length, split, thread_count, i;
     vector* picture_table;
     char* ret_val;
     thread_arr_arg* thread_arg;
@@ -299,6 +299,9 @@ picture* read_txt_file(const char* filename, size_t* picture_arr_size)
         if (vector_at(picture_table, index))
         {
             memcpy(&picture_arr[index], (picture*)vector_at(picture_table, index), sizeof(picture));
+
+            quick_sort(picture_arr[index].value_arr + 2, picture_arr[index].value_arr + 2, picture_arr[index].value_arr + picture_arr[index].value_arr[0] + 1);
+            picture_arr[index].value_arr = set_up_arr(picture_arr[index].value_arr);
 
             free(vector_at(picture_table, index));
 
