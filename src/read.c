@@ -195,15 +195,15 @@ void read_png_files(void* start_arg)
 
             quick_sort(picture_arr->value_arr + 2, picture_arr->value_arr + 2, picture_arr->value_arr + picture_arr->value_arr[0] + 1);
 
-            for (i = 0; i < picture_arr->value_arr[0] + 2; ++i) printf("%d ", picture_arr->value_arr[i]);
+            //for (i = 0; i < picture_arr->value_arr[0] + 2; ++i) printf("%d ", picture_arr->value_arr[i]);
 
-            printf("\n");
+            //printf("\n");
 
             picture_arr->value_arr = set_up_arr(picture_arr->value_arr);
 
-            for (i = 0; i < picture_arr->value_arr[0] * 2 + 2; ++i) printf("%d ", picture_arr->value_arr[i]);
+            //for (i = 0; i < picture_arr->value_arr[0] * 2 + 2; ++i) printf("%d ", picture_arr->value_arr[i]);
 
-            printf("\n");
+            //printf("\n");
 
             ++picture_arr;
 

@@ -77,7 +77,7 @@ void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* clu
 #ifdef _WIN32
 unsigned int __stdcall build_cluster_helper(void* start_arg)
 #else
-void read_png_files_t_helper(void* start_arg)
+void build_cluster_helper(void* start_arg)
 #endif
 {
     thread_arr_helper* arg;
@@ -94,6 +94,12 @@ void read_png_files_t_helper(void* start_arg)
     cluster_ref_table = arg->cluster_ref_table;
 
     build_cluster(pictures, picture_size, cluster, cluster_ref_table);
+
+    #if _WIN32
+
+        return 0;
+    
+    #endif
 
 }
 
