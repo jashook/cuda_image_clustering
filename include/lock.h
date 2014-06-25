@@ -3,12 +3,12 @@
 /*                                                                            */
 /* Author: Jarret Shook                                                       */
 /*                                                                            */
-/* Module: thread_arr_arg.h                                                   */
+/* Module: lock.h                                                             */
 /*                                                                            */
 /* Modifications:                                                             */
 /*                                                                            */
-/* 11-May-14: Version 1.0: Created                                            */
-/* 11-May-14: Version 1.0: Last Updated                                       */
+/* 17-June-4: Version 1.0: Created                                            */
+/* 17-Jun-14: Version 1.0: Last Updated                                       */
 /*                                                                            */
 /*                                                                            */
 /* Timeperiod: ev8                                                            */
@@ -16,28 +16,44 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-#ifndef __THREAD_ARR_ARG_H__
-#define __THREAD_ARR_ARG_H__
+#ifndef __LOCK_H__ 
+#define __LOCK_H__
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-typedef struct thread_arr_arg
+#ifdef _WIN32
+
+#include <windows.h>
+
+#else
+
+#include <pthread.h>
+
+#endif
+
+#include <string.h>
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+typedef struct lock
 {
-    void* start;
-    void* end;
-    void* picture_arr;
+    #ifdef _WIN32
+        CRITICAL_SECTION mutex;
+    #else
+        mutex_t mutex;
+    #endif
 
-} thread_arr_arg;
+} lock;
 
-typedef struct thread_arr_helper
-{
-    void* start;
-    int size;
-    void* cluster;
-    void* cluster_ref_table;
+/* ************************************************************************** */
+/* ************************************************************************** */
 
-} thread_arr_helper;
+void lock_delete(lock*);
+void lock_get(lock*);
+void lock_init(lock*);
+void lock_release(lock*);
 
 /* ************************************************************************** */
 /* ************************************************************************** */

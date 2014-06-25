@@ -31,7 +31,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "lock.h"
 #include "picture.h"
+#include "thread.h"
+#include "thread_arr_arg.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -53,12 +56,19 @@ typedef struct cluster_ref_index
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static const float cluster_number = .97;
+static const float cluster_number = .4;
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
 void build_cluster(picture*, size_t, cluster_index*, cluster_ref_index*);
+
+#ifdef _WIN32
+unsigned int __stdcall build_cluster_helper(void*);
+#else
+void read_png_files_t_helper(void*);
+#endif
+
 void create_first_cluster(picture*, cluster_index*, cluster_ref_index*);
 cluster_index* cluster_images(picture*, size_t);
 float compare_two_images(size_t*, size_t*);

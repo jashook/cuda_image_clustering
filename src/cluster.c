@@ -21,6 +21,8 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
+lock cluster_lock;
+
 void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* cluster, cluster_ref_index* cluster_ref_table)
 {
     size_t cluster_index, index, inner_index, added;
@@ -35,7 +37,11 @@ void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* clu
     {
         for (inner_index = 0; inner_index < cluster_index; ++inner_index)
         {
+            lock_get(&cluster_lock);
+
             current_picture = cluster_ref_table[inner_index].first_picture_in_cluster;
+
+            lock_release(&cluster_lock);
 
             // avoid a comparison with the same image
             if (current_picture->filename == picture_arr[index].filename) continue;
@@ -54,9 +60,13 @@ void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* clu
 
         if (!added)
         {
+            lock_get(&cluster_lock);
+
             cluster[index].cluster_number = cluster_index;
 
             cluster_ref_table[cluster_index++].first_picture_in_cluster = cluster[index].picture;
+
+            lock_release(&cluster_lock);
 
         }
 
@@ -64,17 +74,63 @@ void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* clu
 
 }
 
+#ifdef _WIN32
+unsigned int __stdcall build_cluster_helper(void* start_arg)
+#else
+void read_png_files_t_helper(void* start_arg)
+#endif
+{
+    thread_arr_helper* arg;
+    size_t picture_size;
+    picture* pictures;
+    cluster_index* cluster;
+    cluster_ref_index* cluster_ref_table;
+
+    arg = (thread_arr_helper*) start_arg;
+
+    pictures = arg->start;
+    picture_size = arg->size;
+    cluster = arg->cluster;
+    cluster_ref_table = arg->cluster_ref_table;
+
+    build_cluster(pictures, picture_size, cluster, cluster_ref_table);
+
+}
+
 cluster_index* cluster_images(picture* pictures, size_t picture_size)
 {
     cluster_index* cluster;
     cluster_ref_index* cluster_ref_table;
+    thread t_arr[4];
+    int index, thread_count, split;
+
+    thread_count = 4;
+
+    split = picture_size / thread_count;
+
+    lock_init(&cluster_lock);
 
     init_cluster(&cluster, &cluster_ref_table, pictures, picture_size);
     create_first_cluster(pictures, cluster, cluster_ref_table);
 
-    build_cluster(pictures, picture_size, cluster, cluster_ref_table);
+    for (index = 0; index < thread_count; ++index)
+    {
+        thread_arr_helper* arg = (thread_arr_helper*)malloc(sizeof(thread_arr_helper));
+
+        arg->start = pictures + (index * split);
+        arg->size = index == thread_count - 1 ? picture_size - (split * index) : split;
+        arg->cluster = cluster;
+        arg->cluster_ref_table = cluster_ref_table;
+
+        thread_start(&t_arr[index], build_cluster_helper, arg, 1024);
+
+    }
+
+    for (index = 0; index < thread_count; ++index) thread_join(&t_arr[index]);
 
     free(cluster_ref_table);
+
+    lock_delete(&cluster_lock);
 
     return cluster;
 

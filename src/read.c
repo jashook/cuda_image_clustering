@@ -46,8 +46,8 @@ void hash_picture(const unsigned char* image, size_t height, size_t width, pictu
 {
     size_t i, size, hash_value;
 
-    const size_t png_size = 2500;
-    const size_t png_sqrt_size = 50;
+    const size_t png_size = 100;
+    const size_t png_sqrt_size = 10;
 
     size = width * height;
 
@@ -150,7 +150,7 @@ int read_png_file(picture* current_picture)
 
     /* printf("Trying to open the file: %s\n", current_picture->filename); */
 
-    error = lodepng_decode32_file(&image, &width, &height, current_picture->filename);
+    error = lodepng_decode24_file(&image, &width, &height, current_picture->filename);
 
     if (!error)
     {
@@ -195,15 +195,15 @@ void read_png_files(void* start_arg)
 
             quick_sort(picture_arr->value_arr + 2, picture_arr->value_arr + 2, picture_arr->value_arr + picture_arr->value_arr[0] + 1);
 
-            //for (i = 0; i < picture_arr->value_arr[0] * 2 + 2; ++i) printf("%d ", picture_arr->value_arr[i]);
+            for (i = 0; i < picture_arr->value_arr[0] + 2; ++i) printf("%d ", picture_arr->value_arr[i]);
 
-            //printf("\n");
+            printf("\n");
 
             picture_arr->value_arr = set_up_arr(picture_arr->value_arr);
 
-            //for (i = 0; i < picture_arr->value_arr[0] * 2 + 2; ++i) printf("%d ", picture_arr->value_arr[i]);
+            for (i = 0; i < picture_arr->value_arr[0] * 2 + 2; ++i) printf("%d ", picture_arr->value_arr[i]);
 
-            //printf("\n");
+            printf("\n");
 
             ++picture_arr;
 
