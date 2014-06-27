@@ -41,7 +41,7 @@ void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* clu
 
             current_picture = cluster_ref_table[inner_index].first_picture_in_cluster;
 
-            lock_release(&cluster_lock);
+            lock_release_t(&cluster_lock);
 
             // avoid a comparison with the same image
             if (current_picture->filename == picture_arr[index].filename) continue;
@@ -66,7 +66,7 @@ void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* clu
 
             cluster_ref_table[cluster_index++].first_picture_in_cluster = cluster[index].picture;
 
-            lock_release(&cluster_lock);
+            lock_release_t(&cluster_lock);
 
         }
 
@@ -77,7 +77,7 @@ void build_cluster(picture* picture_arr, size_t picture_size, cluster_index* clu
 #ifdef _WIN32
 unsigned int __stdcall build_cluster_helper(void* start_arg)
 #else
-void build_cluster_helper(void* start_arg)
+void* build_cluster_helper(void* start_arg)
 #endif
 {
     thread_arr_helper* arg;
@@ -95,12 +95,8 @@ void build_cluster_helper(void* start_arg)
 
     build_cluster(pictures, picture_size, cluster, cluster_ref_table);
 
-    #if _WIN32
-
-        return 0;
-    
-    #endif
-
+    return 0;
+   
 }
 
 cluster_index* cluster_images(picture* pictures, size_t picture_size)
@@ -108,7 +104,7 @@ cluster_index* cluster_images(picture* pictures, size_t picture_size)
     cluster_index* cluster;
     cluster_ref_index* cluster_ref_table;
     thread t_arr[4];
-    int index, thread_count, split;
+    size_t index, thread_count, split;
 
     thread_count = 4;
 

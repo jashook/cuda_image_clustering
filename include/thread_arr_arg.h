@@ -33,7 +33,7 @@ typedef struct thread_arr_arg
 typedef struct thread_arr_helper
 {
     void* start;
-    int size;
+    size_t size;
     void* cluster;
     void* cluster_ref_table;
 

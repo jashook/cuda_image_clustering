@@ -22,7 +22,7 @@
 
 void quick_sort_helper(size_t* arr, size_t* buffer, size_t* start, size_t* end)
 {
-    int offset;
+    size_t offset;
     size_t* index, *buffer_index, *middle;
 
     if (start + 1 == end || end - 1 == start || start == end) return;

@@ -51,13 +51,13 @@ void lock_init(lock* lock_ptr)
         InitializeCriticalSection(&lock_ptr->mutex);
 
     #else
-        pthread_mutex_create(&lock_ptr->mutex, NULL);
+        pthread_mutex_init(&lock_ptr->mutex, NULL);
 
     #endif
 
 }
 
-void lock_release(lock* lock_ptr)
+void lock_release_t(lock* lock_ptr)
 {
     #ifdef _WIN32
         LeaveCriticalSection(&lock_ptr->mutex);

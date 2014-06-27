@@ -41,7 +41,7 @@ void read_png_files(void*);
 #ifdef _WIN32
 unsigned int __stdcall read_png_files_t_helper(void*);
 #else
-void read_png_files_t_helper(void*);
+void* read_png_files_t_helper(void*);
 #endif
 
 picture* read_txt_file(const char*, size_t*);

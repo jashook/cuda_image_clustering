@@ -68,7 +68,7 @@ int main(int argc, char** args)
     size_t merged_output, picture_size;
     picture* picture_table;
     cluster_index* cluster;
-    size_t index, inner_index;
+    size_t index;
 
     char* filename = check_arguments(argc, args, &merged_output);
 

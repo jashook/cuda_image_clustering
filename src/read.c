@@ -47,7 +47,6 @@ void hash_picture(const unsigned char* image, size_t height, size_t width, pictu
     size_t i, size, hash_value;
 
     const size_t png_size = 100;
-    const size_t png_sqrt_size = 10;
 
     size = width * height;
 
@@ -70,9 +69,8 @@ void read_csv_file(const char* filename)
 {
     FILE* file;
     picture* current_picture;
-    size_t file_count, index, length, split, thread_count;
+    size_t file_count, index, split, thread_count;
     vector* picture_table;
-    char* ret_val;
     thread_arr_arg* thread_arg;
 
     file_count = thread_count = 0;
@@ -170,7 +168,7 @@ void read_png_files(void* start_arg)
 {
     thread_arr_arg* arg;
     void** start, **end;
-    size_t number, total, i, read;
+    size_t number, total, read;
     picture* picture_arr;
 
     arg = (thread_arr_arg*)start_arg;
@@ -220,20 +218,14 @@ void read_png_files(void* start_arg)
 #ifdef _WIN32
 unsigned int __stdcall read_png_files_t_helper(void* start_arg)
 #else
-void read_png_files_t_helper(void* start_arg)
+void* read_png_files_t_helper(void* start_arg)
 #endif
 {
     read_png_files(start_arg);
 
     free(start_arg);
-
-    #ifdef _WIN32
-
+   
     return 0;
-
-    #else
-
-    #endif
 
 }
        
@@ -241,7 +233,7 @@ picture* read_txt_file(const char* filename, size_t* picture_arr_size)
 {
     FILE* file;
     picture* current_picture;
-    size_t file_count, index, length, split, thread_count, i;
+    size_t file_count, index, length, split, thread_count;
     vector* picture_table;
     char* ret_val;
     thread_arr_arg* thread_arg;

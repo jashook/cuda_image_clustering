@@ -41,7 +41,7 @@ void thread_start(thread* thread_ptr, entry_function_ptr entry_ptr, void* start_
         thread_ptr->handle = (HANDLE)_beginthreadex(NULL, stack_size, entry_ptr, start_arg, (unsigned)0, (unsigned*)&thread_id);
 
     #else
-        pthread_create(thread_ptr->handle, NULL, entry_ptr, start_arg);
+        pthread_create(&thread_ptr->handle, NULL, entry_ptr, start_arg);
 
     #endif
 

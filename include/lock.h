@@ -42,7 +42,7 @@ typedef struct lock
     #ifdef _WIN32
         CRITICAL_SECTION mutex;
     #else
-        mutex_t mutex;
+        pthread_mutex_t mutex;
     #endif
 
 } lock;
@@ -53,7 +53,7 @@ typedef struct lock
 void lock_delete(lock*);
 void lock_get(lock*);
 void lock_init(lock*);
-void lock_release(lock*);
+void lock_release_t(lock*);
 
 /* ************************************************************************** */
 /* ************************************************************************** */
