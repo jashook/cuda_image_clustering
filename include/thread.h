@@ -24,7 +24,8 @@
 
 #ifdef _WIN32
 
-#include <windows.h>
+#include <process.h>
+#include <Windows.h>
 
 #else
 
@@ -33,6 +34,8 @@
 #endif
 
 #include <string.h>
+
+#include "lock.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -54,12 +57,15 @@ typedef struct thread
         pthread_t handle;
     #endif
 
+    size_t index;
+    size_t max_index;
+
 } thread;
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-void thread_init(thread*);
+void thread_init(thread*, size_t);
 void thread_start(thread*, entry_function_ptr, void*, size_t);
 void thread_join(thread*);
 

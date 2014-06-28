@@ -23,7 +23,6 @@ void test_hash_table(const char* const filename)
 {
 
    hash_table table;
-   int i;
    
    hash_table_init(&table);
    

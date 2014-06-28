@@ -269,6 +269,8 @@ void vector_reserve(vector* vec, size_t new_size)
 
     vec->array = temp;
 
+    vec->max_size = new_size;
+
 }
 
 /* ************************************************************************** */

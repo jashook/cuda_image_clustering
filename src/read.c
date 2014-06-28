@@ -160,6 +160,14 @@ int read_png_file(picture* current_picture)
 
     }
 
+    else
+    {
+        printf("Problem reading from path: %s", current_picture->filename);
+
+        exit(1);
+
+    }
+
     return 0;
 
 }
@@ -246,13 +254,13 @@ picture* read_txt_file(const char* filename, size_t* picture_arr_size)
 
     vector_init(picture_table, malloc, free);
 
-    char path[256];
+    char path[512];
 
     file = fopen(filename, "r");
 
     while (!feof(file))
     {
-        ret_val = fgets(path, 256, file);
+        ret_val = fgets(path, 512, file);
 
         if (!ret_val) break;
 
@@ -302,7 +310,7 @@ picture* read_txt_file(const char* filename, size_t* picture_arr_size)
 
         }
 
-        thread_init(&t_arr[index]);
+        thread_init(&t_arr[index], index);
 
         thread_start(&t_arr[index], read_png_files_t_helper, thread_arg, 1024);
 

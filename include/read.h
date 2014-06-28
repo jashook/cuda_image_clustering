@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 
+#include "lodepng.h"
 #include "picture.h"
 #include "thread.h"
 #include "thread_arr_arg.h"

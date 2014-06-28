@@ -108,7 +108,7 @@ size_t* set_up_arr(size_t* arr)
     size_t count, counting;
     size_t size;
 
-    int i, index;
+    size_t i, index;
 
     counting = i = 0;
 

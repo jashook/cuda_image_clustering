@@ -21,8 +21,20 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-void thread_init(thread* thread_ptr)
+void thread_init(thread* thread_ptr, size_t max_index)
 {
+    static lock __thread_count_lock;
+    static size_t __thread_count_lock_initialized = 0;
+    static size_t __thread_index = 0;
+
+    if (!__thread_count_lock_initialized)
+    {
+        lock_init(&__thread_count_lock);
+
+        __thread_count_lock_initialized = 1;
+
+    }
+
     #ifdef _WIN32
         memset(thread_ptr, 0, sizeof(thread));
 
@@ -30,6 +42,16 @@ void thread_init(thread* thread_ptr)
         memset(thread_ptr, 0, sizeof(thread));
 
     #endif
+
+    lock_get(&__thread_count_lock);
+
+    ++__thread_index;
+
+    thread_ptr->index = __thread_index;
+
+    lock_release_t(&__thread_count_lock);
+
+    thread_ptr->max_index = max_index;
 
 }
 

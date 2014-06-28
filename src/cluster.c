@@ -181,7 +181,7 @@ void create_first_cluster(picture* picture_arr, cluster_index* cluster, cluster_
 
 void init_cluster(cluster_index** cluster, cluster_ref_index** cluster_ref_table, picture* pictures, size_t picture_size)
 {
-    int index;
+    size_t index;
 
     *cluster = (cluster_index*)malloc(sizeof(cluster_index) * picture_size);
 

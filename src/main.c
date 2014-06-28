@@ -70,6 +70,8 @@ int main(int argc, char** args)
     cluster_index* cluster;
     size_t index;
 
+    picture_table = NULL;
+
     char* filename = check_arguments(argc, args, &merged_output);
 
     if (!filename) return 1;
