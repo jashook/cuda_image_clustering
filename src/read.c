@@ -179,6 +179,13 @@ void read_png_files(void* start_arg)
     size_t number, total, read;
     picture* picture_arr;
 
+    #ifdef __CUDA__
+        size_t* global_dev_arr;
+
+        size_t blocks;
+
+    #endif
+
     arg = (thread_arr_arg*)start_arg;
 
     start = (void**)arg->start;
@@ -199,7 +206,23 @@ void read_png_files(void* start_arg)
         {
             memcpy(picture_arr, (picture*)(*start), sizeof(picture));
 
-            quick_sort(picture_arr->value_arr + 2, picture_arr->value_arr + 2, picture_arr->value_arr + picture_arr->value_arr[0] + 1);
+            #ifdef __CUDA__
+
+                blocks = 512 + picture_arr->value_arr[0] / 512;
+
+                cudaMalloc(&global_dev_arr, sizeof(size_t) * picture_arr->value_arr[0];
+
+                cudaMemcpy(global_dev_arr, picture_arr->value_arr, picture_value_arr[0], cudaMemcpyHostToDevice);
+
+                merge_sort_gpu<<blocks, 512>>(global_dev_arr, picture_arr->value_arr[0]);
+
+                cudaMemcpy(picture_arr->value_arr + 2, global_dev_arr, picture_value_arr[0], cudaMemcpyDevicetoHost);
+
+            #else
+
+                quick_sort(picture_arr->value_arr + 2, picture_arr->value_arr + 2, picture_arr->value_arr + picture_arr->value_arr[0] + 1);
+
+            #endif
 
             //for (i = 0; i < picture_arr->value_arr[0] + 2; ++i) printf("%d ", picture_arr->value_arr[i]);
 
