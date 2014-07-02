@@ -3,7 +3,7 @@
 /*                                                                            */
 /* Author: Jarret Shook                                                       */
 /*                                                                            */
-/* Module: main.c                                                             */
+/* Module: main.cu                                                            */
 /*                                                                            */
 /* Modifications:                                                             */
 /*                                                                            */
@@ -16,10 +16,22 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-#ifndef __CUDA__
+#if __CUDACC__
+
+#define __CUDA__ 0
+
+#endif
 
 /* ************************************************************************** */
 /* ************************************************************************** */
+
+#if __CUDA__
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -66,7 +78,36 @@ char* check_arguments(int argc, char** args, size_t* merged_output)
 
 int main(int argc, char** args)
 {
-    size_t merged_output, picture_size;
+    size_t arr[SIZE];
+    size_t* dev_arr;
+    int sorted;
+    int i;
+
+    sorted = 1;
+
+    cudaMalloc(&dev_arr, sizeof(size_t) * SIZE);
+
+    for (i = 0; i < SIZE; ++i) arr[i] = rand();
+
+    merge_sort_gpu<<GPU_THREAD_COUNT + SIZE / GPU_THREAD_COUNT, GPU_THREAD_COUNT>>(arr_dev, SIZE);
+
+    //quick_sort(arr, arr, arr + SIZE + 1);
+
+    for (i = 1; i < SIZE; ++i) 
+    {
+        if (arr[i -1] > arr[i])
+        {
+            printf("%d : %d\n", arr[i - 1], arr[i]);
+
+            sorted = 0;
+
+        }
+
+    }
+
+    printf("%s\n", sorted != 1 ? "Not Sorted" : "Sorted");
+
+    /*size_t merged_output, picture_size;
     picture* picture_table;
     cluster_index* cluster;
     char* filename;
@@ -86,7 +127,7 @@ int main(int argc, char** args)
 
     for (index = 0; index < picture_size; ++index) printf("Picture: %s, Cluster Number: %d\n", cluster[index].picture->filename, (int)cluster[index].cluster_number);
 
-    free(cluster);
+    free(cluster); */
 
     return 0;
 

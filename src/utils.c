@@ -22,10 +22,24 @@
 
 void quick_sort_helper(size_t* arr, size_t* buffer, size_t* start, size_t* end)
 {
-    size_t offset;
-    size_t* index, *buffer_index, *middle;
+    size_t offset, multiples;
+    size_t* index, *buffer_index, *middle, *first_repeat;
 
-    if (start + 1 == end || end - 1 == start || start == end) return;
+    if (start == end) return;
+
+    if (start + 1 == end || end - 1 == start) 
+    {
+        if (*start < *end) return;
+
+        offset = *start;
+
+        *start = *end;
+
+        *end = offset;
+
+    }
+    
+    first_repeat = NULL;
 
     middle = start + ((end - start) / 2);
 
@@ -33,11 +47,18 @@ void quick_sort_helper(size_t* arr, size_t* buffer, size_t* start, size_t* end)
 
     offset = 0;
 
-    for (index = start + 1; index != end + 1; ++index)
+    for (index = start + 1; index != end + 2; ++index)
     {
-        if (*(index - 1) <= *middle && index - 1 != middle) *buffer_index++ = *(index - 1);
+        if (*(index - 1) < *middle && index - 1 != middle) 
+        {
+            *buffer_index++ = *(index - 1);
 
-        if (index != end + 1 && *index < *(index - 1)) ++offset;
+        }
+
+        if (index != end + 1 && *index < *(index - 1))
+        {
+           ++offset;
+        }
 
     }
 
@@ -49,24 +70,29 @@ void quick_sort_helper(size_t* arr, size_t* buffer, size_t* start, size_t* end)
 
     for (index = start; index != end + 1; ++index)
     {
+        if ((*index == *middle) && index != middle) *buffer_index++ = *index;
+
+    }
+
+    for (index = start; index != end + 1; ++index)
+    {
         if (*index > *middle) *buffer_index++ = *index;
 
     }
 
-    //for (index = start; index != end + 1; ++index) printf("%d ", *index);
-
-    //printf("\n");
-
     memcpy(start, buffer, ((end - start) + 1) * sizeof(size_t));
-
-    //for (index = start; index != end + 1; ++index) printf("%d ", *index);
-
-    //printf("\n");
 
     middle = start + offset;
 
-    quick_sort_helper(arr, buffer, start, middle);
-    quick_sort_helper(arr, buffer, middle, end);
+    if (start != middle) quick_sort_helper(arr, buffer, start, middle);
+
+    index = middle;
+
+    while (*(++index) == *middle && index != end);
+
+    middle = index;
+
+    if (middle != end) quick_sort_helper(arr, buffer, middle, end);
 
 }
 

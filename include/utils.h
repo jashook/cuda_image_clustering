@@ -31,7 +31,7 @@ size_t* binary_search(size_t*, size_t*, size_t*, size_t);
 
 #ifdef __CUDA__
 
-    __global__ merge_sort_gpu(size_t*, size_t);
+    __global__ void merge_sort_gpu(size_t*, size_t);
 
 #endif
 

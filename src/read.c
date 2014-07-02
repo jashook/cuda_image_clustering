@@ -72,14 +72,13 @@ void read_csv_file(const char* filename)
     size_t file_count, index, split, thread_count;
     vector* picture_table;
     thread_arr_arg* thread_arg;
+    char number[10], url[10000], URL[10], path[256], link_path[256];
 
     file_count = thread_count = 0;
 
     picture_table = (vector*)malloc(sizeof(vector));
 
     vector_init(picture_table, malloc, free);
-
-    char number[10], url[10000], URL[10], path[256], link_path[256];
 
     file = fopen(filename, "r");
 
@@ -162,7 +161,7 @@ int read_png_file(picture* current_picture)
 
     else
     {
-        printf("Problem reading from path: %s", current_picture->filename);
+        printf("Problem: %d while reading from path: %s", error, current_picture->filename);
 
         exit(1);
 
@@ -176,8 +175,11 @@ void read_png_files(void* start_arg)
 {
     thread_arr_arg* arg;
     void** start, **end;
-    size_t number, total, read;
+    size_t number, total, read, sorted;
     picture* picture_arr;
+    size_t i = 0;
+
+    sorted = 1;
 
     #ifdef __CUDA__
         size_t* global_dev_arr;
@@ -208,7 +210,7 @@ void read_png_files(void* start_arg)
 
             #ifdef __CUDA__
 
-                blocks = 512 + picture_arr->value_arr[0] / 512;
+                /*blocks = 512 + picture_arr->value_arr[0] / 512;
 
                 cudaMalloc(&global_dev_arr, sizeof(size_t) * picture_arr->value_arr[0];
 
@@ -216,7 +218,7 @@ void read_png_files(void* start_arg)
 
                 merge_sort_gpu<<blocks, 512>>(global_dev_arr, picture_arr->value_arr[0]);
 
-                cudaMemcpy(picture_arr->value_arr + 2, global_dev_arr, picture_value_arr[0], cudaMemcpyDevicetoHost);
+                cudaMemcpy(picture_arr->value_arr + 2, global_dev_arr, picture_value_arr[0], cudaMemcpyDevicetoHost);*/
 
             #else
 
@@ -232,7 +234,7 @@ void read_png_files(void* start_arg)
 
             //for (i = 0; i < picture_arr->value_arr[0] * 2 + 2; ++i) printf("%d ", picture_arr->value_arr[i]);
 
-            //printf("\n");
+           // printf("\n");
 
             ++picture_arr;
 
@@ -270,14 +272,13 @@ picture* read_txt_file(const char* filename, size_t* picture_arr_size)
     thread_arr_arg* thread_arg;
     picture* picture_arr;
     thread t_arr[4];
+    char path[512];
 
     file_count = thread_count = 0;
 
     picture_table = (vector*)malloc(sizeof(vector));
 
     vector_init(picture_table, malloc, free);
-
-    char path[512];
 
     file = fopen(filename, "r");
 
@@ -303,9 +304,9 @@ picture* read_txt_file(const char* filename, size_t* picture_arr_size)
 
     }
 
-    thread_count = 4;
+    thread_count = 8;
 
-    split = picture_table->size / 4;
+    split = picture_table->size / thread_count;
 
     picture_arr = (picture*)malloc(sizeof(picture)* picture_table->size);
 
@@ -335,7 +336,7 @@ picture* read_txt_file(const char* filename, size_t* picture_arr_size)
 
         thread_init(&t_arr[index], index);
 
-        thread_start(&t_arr[index], read_png_files_t_helper, thread_arg, 1024);
+        thread_start(&t_arr[index], read_png_files_t_helper, thread_arg, 262144);
 
     }
 
