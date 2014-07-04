@@ -18,7 +18,7 @@
 
 #if __CUDACC__
 
-#define __CUDA__ 0
+#define __CUDA__ 1
 
 #endif
 
@@ -34,13 +34,10 @@
 #include "device_launch_parameters.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
-#include "cluster.h"
-#include "picture.h"
-#include "read.h"
-#include "utils.h"
-#include "vector.h"
+#include "utils.cu"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -80,16 +77,21 @@ int main(int argc, char** args)
 {
     size_t arr[SIZE];
     size_t* dev_arr;
+    size_t size;
     int sorted;
     int i;
 
     sorted = 1;
 
+    size = SIZE;
+
     cudaMalloc(&dev_arr, sizeof(size_t) * SIZE);
 
     for (i = 0; i < SIZE; ++i) arr[i] = rand();
 
-    merge_sort_gpu<<GPU_THREAD_COUNT + SIZE / GPU_THREAD_COUNT, GPU_THREAD_COUNT>>(arr_dev, SIZE);
+    merge_sort_gpu<<1, 512>>(dev_arr, size);
+
+    //merge_sort_gpu<<GPU_THREAD_COUNT + SIZE / GPU_THREAD_COUNT, GPU_THREAD_COUNT>>(dev_arr, size);
 
     //quick_sort(arr, arr, arr + SIZE + 1);
 

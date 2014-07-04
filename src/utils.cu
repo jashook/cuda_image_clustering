@@ -39,13 +39,13 @@ __global__ void merge_sort_gpu(size_t* global_arr, size_t size)
 
     __shared__ size_t shared_arr[SHARED_MEM_SIZE];
 
-    size_t index = threadIdx.x + blockIdx.x * blockDim.x;
+    index = threadIdx.x + blockIdx.x * blockDim.x;
     
     offset = 1;
 
     arr = global_arr;
 
-    while (offset != threadDim.x)
+    while (offset != SIZE)
     {   
         // Choose the thread at the last index of the first section to merge
         
