@@ -25,8 +25,13 @@
 /* ************************************************************************** */
 void cuda_device_abstract_init(void)
 {
-   s_cuda_gpu_count();
+    size_t index;
 
+    for (index = 0; index < s_gpu_count(); ++index)
+    {
+        lock_init(s_cuda_create_device_locks()[index]);
+
+    }
 }
 
 size_t cuda_get_device_id(thread* thread_ptr)
